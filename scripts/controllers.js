@@ -49,31 +49,69 @@ angular.module('confusionApp')
    {
       $scope.feedback={mychannel:"",firstName:"",lastName:"",
                       agree:false,email:""};
-      var channels=[{value:"tel",label:"Tel."},
+      var channels=[{value:"Tel.",label:"Tel."},
            {value:"Email",label:"Email"}];
       $scope.channels=channels;
       $scope.invalidChannelSelection=false;
 
   
 }])
-.controller('FeedbackController',['$scope',function($scope){
+.controller('FeedbackController',['$scope','feedbackFactory',function($scope,feedbackFactory){
 //operate the following function, when the "Send Feedback" btn is clicked.
   $scope.sendFeedback=function(){
-    console.log($scope.feedback);
 
+    /*console.log(feedbackFactory.query());
+    var ID=feedbackFactory.query().length;
+    
+    console.log(ID);
+*/
+
+
+    //Judge if the contact way is correctly selected
     if ($scope.feedback.agree && ($scope.feedback.mychannel === "") && (!$scope.feedback.mychannel))
     {
+      //show warning
       $scope.invalidChannelSelection=true;
       console.log('incorrect');
     }
     else{
-      $scope.invalidChannelSelection=false;
-      $scope.feedback={mychannel:"",firstName:"",lastName:"",
-            agree:false,email:""};
-      $scope.feedback.mychannel="";
-      $scope.feedbackForm.$setPristine();
-      console.log($scope.feedback);
-    }
+        //update myChannel for feedback
+        $scope.invalidChannelSelection=false;
+        
+
+         //build a new instance
+        var entry=new feedbackFactory();
+
+         //save data to server
+        entry.firstName = $scope.feedback.firstName;
+        entry.lastName=$scope.feedback.lastName;
+        entry.areaCode=$scope.feedback.tel.areaCode;
+        entry.telNum=$scope.feedback.tel.number;
+        entry.email=$scope.feedback.email;
+
+        if($scope.feedback.mychannel !== "")
+          {
+            entry.myChannel=$scope.feedback.mychannel;
+          }
+        else
+          {
+            entry.myChannel="NA";
+          }
+        entry.comment=$scope.feedback.comments;
+
+        entry.$save(function() {
+                console.log(feedbackFactory.query());
+           }); 
+
+        //initialize the form
+        $scope.feedback={mychannel:"",firstName:"",lastName:"",
+              agree:false,email:""};
+        $scope.feedback.mychannel="";
+        $scope.feedbackForm.$setPristine();
+        console.log($scope.feedback);
+    }//end the outer else
+
+
   }; //endsendFeedback function
 
 }])
@@ -140,7 +178,11 @@ angular.module('confusionApp')
   .controller('IndexController',['$scope','menuFactory','corporateFactory',function($scope,menuFactory,corporateFactory){
       
       $scope.showDish=false;
-      $scope.message="Loading ...";
+      $scope.messageDish="Loading ...";
+      $scope.showProm=false;
+      $scope.messageProm="Loading ...";
+      $scope.showChef=false;
+      $scope.messageChef="Loading ...";
 
       //get "feature" data from server.
       $scope.feature=menuFactory.getDishes().get({id:0})
@@ -150,18 +192,53 @@ angular.module('confusionApp')
                             $scope.showDish=true;
                           },
                           function(response){
-                            $scope.message="Error:"+response.status+" "+response.statusText;
+                            $scope.messageDish="Error:"+response.status+" "+response.statusText;
                           }
                         );
       
 
-      var promotion=menuFactory.getPromotion(0);
-      $scope.promotion=promotion;
+      $scope.promotion=menuFactory.getPromotions().get({id:0})
+                        .$promise.then(
+                           function(response){
+                            $scope.promotion=response;
+                            $scope.showProm=true;
+                           },
+                           function(response){
+                            $scope.messageProm="Error:"+response.status+" "+response.statusText;
+                           }
+                          );
 
-      $scope.chef=corporateFactory.getLeader(3);
+      $scope.chef=corporateFactory.getLeader(3).$promise
+                  .then(
+                       function(response){
+                          $scope.chef=response;
+                          $scope.showChef=true;
+                       },
+                       function(response){
+                          $scope.messageChef="Error:"+response.status+" "+response.statusText;
+                       }
+                    );
+
+ 
+          
   }])
   .controller('AboutController',['$scope','corporateFactory',function($scope,corporateFactory){
 
-      $scope.leaders=corporateFactory.getLeaders();
+        $scope.showChefs=false;
+        $scope.message="Loading ...";
+
+    //get data "Leaders" from server
+    $scope.leaders=corporateFactory.getLeaders().query(
+        function(response){
+          $scope.leaders=response;
+          $scope.showChefs=true;
+        },
+        function(response){
+          $scope.message="Error: "+response.status+" "+response.statusText;
+        }
+
+      );
+
+
   }]);//end the anonymous function within app.controller
 

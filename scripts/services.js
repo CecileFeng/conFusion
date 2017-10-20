@@ -5,7 +5,7 @@ angular.module('confusionApp')
 
 	.service('menuFactory',['$resource','baseURL',function($resource,baseURL){
 
-    var promotions=[
+    /*var promotions=[
                         {
                           _id:0,
                           name:'Weekend Grand Buffet',
@@ -14,24 +14,25 @@ angular.module('confusionApp')
                           price:'19.99',
                           description:'Featuring mouthwatering combinations with a choice of five different salads, six enticing appetizers, six main entrees and five choicest desserts. Free flowing bubbly and soft drinks. All for just $19.99 per person ',
                         }];  //end promotions                      
-
+*/
 
     this.getDishes=function(){
     	return $resource(baseURL+"dishes/:id",null,
         {'update':{method:'PUT'}});
     };
 
-    this.getPromotion = function(index){
-      return promotions[index];
+    this.getPromotions = function(){
+      return $resource(baseURL+"promotions/:id",null,
+        {'update':{method:'PUT'}});
     };
 
 	}]).
 
-  factory('corporateFactory',function(){
+  factory('corporateFactory',['$resource','baseURL',function($resource,baseURL){
 
-    var corpfac={};
+    /* var corpfac={};
 
-    var leadership=[
+      var leadership=[
       {
           _id:0,
           name: "Peter Pan",
@@ -39,31 +40,8 @@ angular.module('confusionApp')
           designation: "Chief Epicurious Officer",
           abbr: "CEO",
           description: "Our CEO, Peter, credits his hardworking East Asian immigrant parents who undertook the arduous journey to the shores of America with the intention of giving their children the best future. His mother's wizardy in the kitchen whipping up the tastiest dishes with whatever is available inexpensively at the supermarket, was his first inspiration to create the fusion cuisines for which The Frying Pan became well known. He brings his zeal for fusion cuisines to this restaurant, pioneering cross-cultural culinary connections."
-      },
-      {
-          _id:1,
-          name: "Dhanasekaran Witherspoon",
-          image: 'images/alberto.png',
-          designation: "Chief Food Officer",
-          abbr: "CFO",
-          description: "Our CFO, Danny, as he is affectionately referred to by his colleagues, comes from a long established family tradition in farming and produce. His experiences growing up on a farm in the Australian outback gave him great appreciation for varieties of food sources. As he puts it in his own words, Everything that runs, wins, and everything that stays, pays!"
-      },
-      {
-          _id:2,
-          name: "Agumbe Tang",
-                image: 'images/alberto.png',
-          designation: "Chief Taste Officer",
-          abbr: "CTO",
-          description: "Blessed with the most discerning gustatory sense, Agumbe, our CFO, personally ensures that every dish that we serve meets his exacting tastes. Our chefs dread the tongue lashing that ensues if their dish does not meet his exacting standards. He lives by his motto, You click only if you survive my lick."
-      },
-      {
-          _id:3,
-          name: "Alberto Somayya",
-          image: 'images/alberto.png',
-          designation: "Executive Chef",
-          abbr: "EC",
-          description: "Award winning three-star Michelin chef with wide International experience having worked closely with whos-who in the culinary world, he specializes in creating mouthwatering Indo-Italian fusion experiences. He says, Put together the cuisines from the two craziest cultures, and you get a winning hit! Amma Mia!"
       }
+ 
       ]; //end leadership
 
       corpfac.getLeaders=function(){
@@ -74,9 +52,30 @@ angular.module('confusionApp')
                 return leadership[index];
         
       };
-      return corpfac;
+    return corpfac;
+      */
+      
+    return {
+      getLeader:function(index){
+        return $resource(baseURL+"leadership/:id",null,
+                {'update':{method:'PUT'}}).get({id:index});
+        },
 
-  }); //end factory
+      getLeaders:function(){
+        return $resource(baseURL+"leadership/:id",null,
+                {'update':{method:'PUT'}});
+        }
+      
+    };
+
+  }]).
+factory('feedbackFactory',['$resource','baseURL',function($resource,baseURL){
+    
+
+      return $resource(baseURL+"feedback/:id",null,
+        {'update':{method:'PUT'}});
+
+  }]); //end factory
 
 
 
