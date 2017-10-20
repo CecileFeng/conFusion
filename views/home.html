@@ -11,12 +11,12 @@
             <div class="col-xs-12 col-sm-9 col-sm-pull-3">
                 <!--Dish 1: uthapizza-->
                 <div ng-if="!showDish">
-                     <h3>{{message}}</h3>
+                     <h3>{{messageDish}}</h3>
                 </div>
                 
                 <div class="media" ng-if="showDish">
     				<div class="media-left media-middle">
-                        <a ui-sref="app.dishdetails({id:feature._id})">
+                        <a ui-sref="app.dishdetails({id:feature.id})">
                             <img class="media-object img-thumbnail"
                             ng-src={{feature.image}} alt="{{feature.name}}">
                         </a>
@@ -43,7 +43,11 @@
 
             <div class="col-xs-12 col-sm-9">
                 <!--promotion-->
-				<div class="media">
+                <div ng-if="!showProm">
+                     <h3>{{messageProm}}</h3>
+                </div>
+
+				<div class="media" ng-if="showProm">
                     <div class="media-body">
                         <h2 class="media-heading">{{promotion.name}}  
                             <span class="label label-danger">{{promotion.label}}</span>
@@ -68,9 +72,14 @@
                 <p style="padding:20px;"></p>
                 <h3 align=center>Meet our Culinary Specialists</h3>
             </div>
+            
             <div class="col-xs-12 col-sm-9 col-sm-pull-3">
 				<!--Chef info-->
-                <div class="media">
+                <div ng-if="!showChef">
+                     <h3>{{messageChef}}</h3>
+                </div>
+
+                <div class="media" ng-if="showChef">
                     <div class="media-left media-middle">
                         <a href="#">
                             <img class="media-object img-thumbnail"
@@ -84,6 +93,7 @@
                         <p>{{chef.description}}</p>
                     </div>
                 </div>
+
             </div>
         </div><!--end row-content of Chef-->
 
